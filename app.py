@@ -79,6 +79,27 @@ def login():
             return redirect(url_for('index'))
         flash('Nieprawidłowe dane logowania.')
     return render_template('login.html')
+from flask import abort
+
+def admin_required(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.username != 'admin':
+            return abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/admin_users')
+@admin_required
+def admin_users():
+    users = User.query.all()
+    return (
+        "<h2>Lista użytkowników:</h2>"
+        "<table border='1' cellpadding='4'><tr><th>ID</th><th>Login</th><th>Hash hasła</th></tr>" +
+        "".join(f"<tr><td>{u.id}</td><td>{u.username}</td><td style='font-size:10px'>{u.password}</td></tr>" for u in users) +
+        "</table>"
+    )
 
 @app.route('/logout')
 @login_required
