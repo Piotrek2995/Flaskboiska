@@ -1,11 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
+import io
 
 app = Flask(__name__)
 app.secret_key = 'tajny_klucz'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+# Użyj PostgreSQL na produkcji, SQLite lokalnie
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
 db = SQLAlchemy(app)
 
 login_manager = LoginManager(app)
@@ -35,7 +38,6 @@ class Report(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     photo = db.Column(db.LargeBinary)
 
-
 class MatchSignup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -46,6 +48,27 @@ class MatchSignup(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+# Admin tylko dla admina
+def admin_required(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.username != 'admin':
+            return abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/admin_users')
+@admin_required
+def admin_users():
+    users = User.query.all()
+    return (
+        "<h2>Lista użytkowników:</h2>"
+        "<table border='1' cellpadding='4'><tr><th>ID</th><th>Login</th><th>Hash hasła</th></tr>" +
+        "".join(f"<tr><td>{u.id}</td><td>{u.username}</td><td style='font-size:10px'>{u.password}</td></tr>" for u in users) +
+        "</table>"
+    )
 
 @app.route('/')
 def index():
@@ -79,27 +102,6 @@ def login():
             return redirect(url_for('index'))
         flash('Nieprawidłowe dane logowania.')
     return render_template('login.html')
-from flask import abort
-
-def admin_required(f):
-    from functools import wraps
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.username != 'admin':
-            return abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
-
-@app.route('/admin_users')
-@admin_required
-def admin_users():
-    users = User.query.all()
-    return (
-        "<h2>Lista użytkowników:</h2>"
-        "<table border='1' cellpadding='4'><tr><th>ID</th><th>Login</th><th>Hash hasła</th></tr>" +
-        "".join(f"<tr><td>{u.id}</td><td>{u.username}</td><td style='font-size:10px'>{u.password}</td></tr>" for u in users) +
-        "</table>"
-    )
 
 @app.route('/logout')
 @login_required
@@ -154,9 +156,6 @@ def join_match(match_id):
         flash('Już jesteś zapisany na to spotkanie.')
     return redirect(url_for('index'))
 
-from flask import send_file
-import io
-
 @app.route('/report_photo/<int:report_id>')
 def report_photo(report_id):
     report = Report.query.get(report_id)
@@ -180,7 +179,6 @@ def ensure_default_users():
 
 if __name__ == '__main__':
     with app.app_context():
-
         db.create_all()
         ensure_default_users()
     app.run(debug=True)
