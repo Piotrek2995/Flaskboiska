@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Logowanie</title>
+    <style>
+        body { font-family: Arial; background: #e3f2fd; padding: 40px;}
+        .container { background: #fff; padding: 24px 32px; border-radius: 10px; margin: auto; max-width: 350px; box-shadow: 0 2px 8px #0002;}
+        form { display: flex; flex-direction: column; gap: 12px;}
+        button { padding: 10px; background: #1976d2; color: #fff; border: none; border-radius: 4px;}
+        .msg { color: #e91c1c; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Logowanie</h2>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="msg">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+    <form method="post">
+        <label>Login: <input name="username" required></label>
+        <label>Hasło: <input type="password" name="password" required></label>
+        <button type="submit">Zaloguj</button>
+    </form>
+    <div style="margin-top:10px;"><a href="/register">Nie masz konta? Zarejestruj się</a></div>
+</div>
+</body>
+</html>
