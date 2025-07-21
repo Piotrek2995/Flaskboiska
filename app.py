@@ -157,6 +157,19 @@ def join_match(match_id):
         flash('Już jesteś zapisany na to spotkanie.')
     return redirect(url_for('index'))
 
+@app.route('/spotkania')
+def meetings():
+    matches = Match.query.order_by(Match.date, Match.time).all()
+    user = current_user if current_user.is_authenticated else None
+    return render_template('meetings.html', matches=matches, user=user)
+
+@app.route('/awarie')
+def issues():
+    reports = Report.query.order_by(Report.date.desc()).all()
+    user = current_user if current_user.is_authenticated else None
+    return render_template('issues.html', reports=reports, user=user)
+
+
 @app.route('/report_photo/<int:report_id>')
 def report_photo(report_id):
     report = Report.query.get(report_id)
