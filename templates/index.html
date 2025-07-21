@@ -2,237 +2,82 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>SportMapper – spotkania i awarie</title>
+    <title>SportMapper – start</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 30px; }
-        .container { max-width: 700px; margin: auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px #0001; padding: 26px 32px;}
-        h2 { margin-bottom: 10px; }
-        form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;}
-        label { font-size: 15px; }
-        input, select, textarea { padding: 8px; border: 1px solid #aaa; border-radius: 4px; font-size: 15px;}
-        button { padding: 10px; background: #186637; color: #fff; border: none; border-radius: 4px; cursor: pointer;}
-        button:hover { background: #168046;}
-        .logout { float: right; font-size: 15px;}
-        .tab { margin-top: 20px; }
-        .match, .report { background: #e8f5e9; margin-bottom: 10px; padding: 10px 12px; border-radius: 6px; font-size: 15px;}
-        .report { background: #fff3e0;}
-        .msg { color: #e91c1c; margin-bottom: 12px; }
-        .menu { margin-bottom: 20px; }
-        .menu button { background: #1976d2; color: #fff; border: none; margin-right: 10px;}
-        .menu button.active { background: #186637;}
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 520px; margin: 60px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px #0001; padding: 36px 40px;}
+        h1 { font-size: 2.1rem; color: #186637; text-align: center; margin-top: 8px;}
+        .main-links { display: flex; flex-direction: column; gap: 24px; margin: 38px 0 24px 0;}
+        .main-link {
+            display: flex; align-items: center; gap: 18px;
+            background: #25d366; color: #fff;
+            font-size: 1.25rem; font-weight: bold;
+            padding: 22px 18px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px #0002;
+            text-decoration: none;
+            transition: background .2s, transform .15s;
+        }
+        .main-link:hover { background: #168046; transform: translateY(-2px) scale(1.03);}
+        .main-link .icon { height: 40px; }
         .topbar {
             background: #25d366;
-            height: 48px;
+            height: 56px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 32px;
             color: black;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
             letter-spacing: 1px;
             box-shadow: 0 2px 10px #0001;
-            margin-bottom: 32px;
         }
-        .logo {
-            display: flex;
-            align-items: center;
+        .logo { display: flex; align-items: center;}
+        .icon-header { height: 36px; margin-right: 14px; vertical-align: middle; }
+        .brand { font-family: 'Segoe UI', Arial, sans-serif; font-weight: 700; font-size: 1.4rem;}
+        .user-bar a {
+            color: #186637;
+            font-size: 1.08rem;
+            font-weight: bold;
+            text-decoration: none;
+            margin-left: 18px;
         }
-        .icon {
-            height: 38px;
-            margin-right: 18px;
-            vertical-align: middle;
-        }
-        .brand {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-weight: 700;
-            font-size: 1.45rem;
-        }
-        /* Tabs bar */
-        .tabs-bar {
-            display: flex;
-            margin-bottom: 24px;
-            border-radius: 10px 10px 0 0;
-            overflow: hidden;
-            background: #25d366;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 14px;
-            background: #25d366;
-            color: #fff;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            transition: background .2s;
-        }
-        .tab-btn.active {
-            background: #186637;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
+        .user-bar a:hover { color: #0a4424; }
     </style>
-    <script>
-        function showMainTab(tab) {
-            const meetings = document.getElementById('tab-meetings');
-            const issues = document.getElementById('tab-issues');
-            const btnMeetings = document.getElementById('tab-meetings-btn');
-            const btnIssues = document.getElementById('tab-issues-btn');
-            if (tab === 'meetings') {
-                meetings.classList.add('active');
-                issues.classList.remove('active');
-                btnMeetings.classList.add('active');
-                btnIssues.classList.remove('active');
-            } else {
-                meetings.classList.remove('active');
-                issues.classList.add('active');
-                btnMeetings.classList.remove('active');
-                btnIssues.classList.add('active');
-            }
-        }
-        window.onload = function() {
-            showMainTab('meetings');
-        };
-        // Dodatkowe pokazywanie/ukrywanie formularzy w obrębie danej zakładki:
-        function showTab(tab) {
-            if (document.getElementById('add_match'))
-                document.getElementById('add_match').style.display = tab === 'match' ? 'block' : 'none';
-            if (document.getElementById('report_issue'))
-                document.getElementById('report_issue').style.display = tab === 'issue' ? 'block' : 'none';
-            if (document.getElementById('match_btn'))
-                document.getElementById('match_btn').classList.toggle('active', tab === 'match');
-            if (document.getElementById('issue_btn'))
-                document.getElementById('issue_btn').classList.toggle('active', tab === 'issue');
-        }
-    </script>
 </head>
 <body>
 <div class="topbar">
     <span class="logo">
-        <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
+        <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon-header">
         <span class="brand">SportMapper</span>
     </span>
+    <span class="user-bar">
+        <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
+    </span>
 </div>
-
-<div class="tabs-bar">
-    <button class="tab-btn active" id="tab-meetings-btn" onclick="showMainTab('meetings')">Spotkania</button>
-    <button class="tab-btn" id="tab-issues-btn" onclick="showMainTab('issues')">Awarie</button>
-</div>
-
 <div class="container">
-
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="msg">{{ messages[0] }}</div>
-      {% endif %}
-    {% endwith %}
-
-    <div style="overflow:hidden">
-        {% if user %}
-            <span>Witaj, {{ user.username }}!</span>
-            <a class="logout" href="/logout">Wyloguj się</a>
-        {% else %}
-            <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
-        {% endif %}
+    <h1>Witamy w SportMapper!</h1>
+    <div class="main-links">
+        <a href="/spotkania" class="main-link">
+            <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
+            Dodaj lub dołącz do spotkania
+        </a>
+        <a href="/awarie" class="main-link">
+            <img src="https://img.icons8.com/external-smashingstocks-flat-smashing-stocks/40/FFFFFF/external-report-feedback-and-testimonial-smashingstocks-flat-smashing-stocks.png" class="icon" alt="awarie">
+            Zgłoś lub przejrzyj awarie
+        </a>
+        <a href="/login" class="main-link">
+            <img src="https://img.icons8.com/ios-filled/40/FFFFFF/login-rounded-right.png" class="icon" alt="login">
+            Logowanie
+        </a>
+        <a href="/register" class="main-link">
+            <img src="https://img.icons8.com/ios-filled/40/FFFFFF/add-user-group-man-man.png" class="icon" alt="register">
+            Rejestracja
+        </a>
     </div>
-
-    <!-- SPOTKANIA -->
-    <div class="tab-content active" id="tab-meetings">
-        {% if user %}
-            <div class="menu">
-                <button id="match_btn" onclick="showTab('match')" class="active">Dodaj spotkanie</button>
-            </div>
-            <div id="add_match">
-                <form action="/add_match" method="POST">
-                    <label>Dzień: <input type="date" name="date" required></label>
-                    <label>Godzina: <input type="time" name="time" required></label>
-                    <label>Sport:
-                        <select name="sport" required>
-                            <option value="Piłka nożna">Piłka nożna</option>
-                            <option value="Koszykówka">Koszykówka</option>
-                            <option value="Siatkówka">Siatkówka</option>
-                        </select>
-                    </label>
-                    <label>Boisko / Lokalizacja: <input type="text" name="place" required></label>
-                    <button type="submit">Dodaj spotkanie</button>
-                </form>
-            </div>
-        {% endif %}
-        <div class="tab">
-            <h2>Lista spotkań</h2>
-            {% for m in matches %}
-            <div class="match">
-                <b>{{ m.sport }}</b> – <b>{{ m.place }}</b><br>
-                {{ m.date }} godz. {{ m.time }}<br>
-                Organizator: {{ m.name }}<br>
-                <u>Lista zapisanych:</u>
-                <ul style="margin: 2px 0 0 12px; padding: 0;">
-                    {% for signup in m.signups %}
-                        <li>{{ signup.user.username }}</li>
-                    {% else %}
-                        <li>Brak zapisanych</li>
-                    {% endfor %}
-                </ul>
-                {% if user.is_authenticated %}
-                    {% set already = false %}
-                    {% for signup in m.signups %}
-                        {% if signup.user_id == user.id %}
-                            {% set already = true %}
-                        {% endif %}
-                    {% endfor %}
-                    {% if not already %}
-                        <form method="post" action="{{ url_for('join_match', match_id=m.id) }}">
-                            <button type="submit">Dołącz do spotkania</button>
-                        </form>
-                    {% else %}
-                        <em>Jesteś już zapisany</em>
-                    {% endif %}
-                {% endif %}
-            </div>
-            {% else %}
-            <p>Brak spotkań.</p>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- AWARIE -->
-    <div class="tab-content" id="tab-issues">
-        {% if user %}
-            <div class="menu">
-                <button id="issue_btn" onclick="showTab('issue')" class="active">Zgłoś awarię</button>
-            </div>
-            <div id="report_issue">
-                <form action="/report_issue" method="POST" enctype="multipart/form-data">
-                    <label>Tytuł awarii: <input type="text" name="title" required></label>
-                    <label>Opis: <textarea name="description" required></textarea></label>
-                    <label>Boisko / Lokalizacja: <input type="text" name="place" required></label>
-                    <label>Data zgłoszenia: <input type="date" name="date" required></label>
-                    <label>Zdjęcie (opcjonalnie): <input type="file" name="photo" accept="image/*"></label>
-                    <button type="submit">Zgłoś awarię</button>
-                </form>
-            </div>
-        {% endif %}
-        <div class="tab">
-            <h2>Zgłoszone awarie</h2>
-            {% for r in reports %}
-                <div class="report">
-                    <b>{{ r.title }}</b> – <b>{{ r.place }}</b><br>
-                    {{ r.description }}<br>
-                    Data: {{ r.date }}
-                    {% if r.photo %}
-                        <br>
-                        <img src="{{ url_for('report_photo', report_id=r.id) }}" alt="zdjęcie awarii" style="max-width:160px;max-height:120px;">
-                    {% endif %}
-                </div>
-            {% else %}
-                <p>Brak zgłoszonych awarii.</p>
-            {% endfor %}
-        </div>
+    <div style="text-align:center; color:#999; font-size:1.04rem;">
+        Platforma do zarządzania boiskami, spotkaniami i zgłaszania awarii.
     </div>
 </div>
 </body>
