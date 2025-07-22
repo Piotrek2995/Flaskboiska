@@ -169,6 +169,11 @@ def issues():
     user = current_user if current_user.is_authenticated else None
     return render_template('issues.html', reports=reports, user=user)
 
+@app.route("/mapa")
+def mapa():
+    user = current_user if current_user.is_authenticated else None
+    return render_template("mapa.html", user=user)
+
 
 @app.route('/report_photo/<int:report_id>')
 def report_photo(report_id):

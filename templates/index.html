@@ -45,8 +45,6 @@
         }
         .user-bar a:hover { color: #0a4424; }
     </style>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
-    <script src="https://js.arcgis.com/4.29/"></script>
 </head>
 <body>
 <div class="topbar">
@@ -69,6 +67,10 @@
             <img src="{{ url_for('static', filename='awaria.png') }}" alt="icon" class="icon">
             Zgłoś lub przejrzyj awarie
         </a>
+        <a href="/mapa" class="main-link">
+            <img src="https://img.icons8.com/ios-filled/40/FFFFFF/map-marker.png" class="icon" alt="mapa">
+            Mapa boisk
+        </a>
         <a href="/login" class="main-link">
             <img src="https://img.icons8.com/ios-filled/40/FFFFFF/login-rounded-right.png" class="icon" alt="login">
             Logowanie
@@ -82,31 +84,5 @@
         Platforma do zarządzania boiskami, spotkaniami i zgłaszania awarii.
     </div>
 </div>
-
-<div style="margin: 40px 0 0 0; padding:0;">
-    <div style="font-size:1.3rem; font-weight:600; color:#186637; text-align:center; margin-bottom:14px;">
-        Interaktywna mapa boisk
-    </div>
-    <div id="viewDiv" style="height: 440px; width: 100%; border-radius: 12px; box-shadow: 0 2px 10px #0002; margin:auto;"></div>
-</div>
-
-<script>
-require([
-  "esri/Map",
-  "esri/views/MapView",
-  "esri/WebMap"
-], function(Map, MapView, WebMap) {
-  var webmap = new WebMap({
-    portalItem: {
-      id: "eb73a993a46e4bfebf7c4e919ad6c62c"
-    }
-  });
-  var view = new MapView({
-    container: "viewDiv",
-    map: webmap,
-    zoom: 13
-  });
-});
-</script>
 </body>
 </html>
