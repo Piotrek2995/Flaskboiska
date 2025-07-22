@@ -5,7 +5,7 @@
     <title>SportMapper – start</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-        .container { max-width: 520px; margin: 60px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px #0001; padding: 36px 40px;}
+        .container { max-width: 520px; margin: 60px auto 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px #0001; padding: 36px 40px;}
         h1 { font-size: 2.1rem; color: #186637; text-align: center; margin-top: 8px;}
         .main-links { display: flex; flex-direction: column; gap: 24px; margin: 38px 0 24px 0;}
         .main-link {
@@ -45,6 +45,8 @@
         }
         .user-bar a:hover { color: #0a4424; }
     </style>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.29/"></script>
 </head>
 <body>
 <div class="topbar">
@@ -80,5 +82,31 @@
         Platforma do zarządzania boiskami, spotkaniami i zgłaszania awarii.
     </div>
 </div>
+
+<div style="margin: 40px 0 0 0; padding:0;">
+    <div style="font-size:1.3rem; font-weight:600; color:#186637; text-align:center; margin-bottom:14px;">
+        Interaktywna mapa boisk
+    </div>
+    <div id="viewDiv" style="height: 440px; width: 100%; border-radius: 12px; box-shadow: 0 2px 10px #0002; margin:auto;"></div>
+</div>
+
+<script>
+require([
+  "esri/Map",
+  "esri/views/MapView",
+  "esri/WebMap"
+], function(Map, MapView, WebMap) {
+  var webmap = new WebMap({
+    portalItem: {
+      id: "eb73a993a46e4bfebf7c4e919ad6c62c"
+    }
+  });
+  var view = new MapView({
+    container: "viewDiv",
+    map: webmap,
+    zoom: 12
+  });
+});
+</script>
 </body>
 </html>
