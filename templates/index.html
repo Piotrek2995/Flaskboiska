@@ -36,14 +36,21 @@
         .logo { display: flex; align-items: center;}
         .icon-header { height: 36px; margin-right: 14px; vertical-align: middle; }
         .brand { font-family: 'Segoe UI', Arial, sans-serif; font-weight: 700; font-size: 1.4rem;}
-        .user-bar a {
-            color: #186637;
+        .user-bar {
             font-size: 1.08rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+    }
+        .logout, .user-bar a {
+            color: #186637;
             font-weight: bold;
             text-decoration: none;
             margin-left: 18px;
-        }
-        .user-bar a:hover { color: #0a4424; }
+    }
+    .user-bar a:hover, .logout:hover { color: #0a4424; }
+
+
     </style>
 </head>
 <body>
@@ -53,9 +60,15 @@
         <span class="brand">SportMapper</span>
     </span>
     <span class="user-bar">
-        <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
+        {% if user %}
+            Witaj, {{ user.username }}!
+            <a class="logout" href="/logout">Wyloguj się</a>
+        {% else %}
+            <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
+        {% endif %}
     </span>
 </div>
+
 <div class="container">
     <h1>Witamy w SportMapper!</h1>
     <div class="main-links">
