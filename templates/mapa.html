@@ -23,10 +23,10 @@
         .icon-header { height: 36px; margin-right: 14px; vertical-align: middle; }
         .brand { font-family: 'Segoe UI', Arial, sans-serif; font-weight: 700; font-size: 1.3rem;}
         #viewDiv {
-            height: 731px;
+            height: 600px;
             width: 96vw;
-            max-width: 1800px;
-            margin: 20px auto 0 auto;
+            max-width: 1400px;
+            margin: 40px auto 0 auto;
             border-radius: 12px;
             box-shadow: 0 2px 10px #0002;
         }
@@ -38,14 +38,24 @@
         <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon-header">
         <span class="brand">SportMapper</span>
     </span>
+    <span class="user-bar">
+        {% if user %}
+            Witaj, {{ user.username }}!
+            <a class="logout" href="/logout">Wyloguj się</a>
+        {% else %}
+            <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
+        {% endif %}
+    </span>
 </div>
 <div id="viewDiv"></div>
 <script>
 require([
   "esri/Map",
   "esri/views/MapView",
-  "esri/WebMap"
-], function(Map, MapView, WebMap) {
+  "esri/WebMap",
+  "esri/Graphic",
+  "esri/layers/GraphicsLayer"
+], function(Map, MapView, WebMap, Graphic, GraphicsLayer) {
   var webmap = new WebMap({
     portalItem: {
       id: "8db564340ff24222b38102964f601dd4"
@@ -56,7 +66,86 @@ require([
     map: webmap,
     zoom: 11
   });
+
+  // Awaria - pomarańczowe
+  var awarieLayer = new GraphicsLayer();
+  webmap.add(awarieLayer);
+
+  // Spotkania - niebieskie
+  var spotkaniaLayer = new GraphicsLayer();
+  webmap.add(spotkaniaLayer);
+
+  // Awarie
+  fetch("/api/awarie")
+    .then(resp => resp.json())
+    .then(data => {
+      data.forEach(function(a) {
+        var point = {
+          type: "point",
+          longitude: a.x,
+          latitude: a.y
+        };
+        var markerSymbol = {
+          type: "simple-marker",
+          color: [230, 126, 34, 0.85],
+          size: 16,
+          outline: { color: "#7d3c98", width: 1.5 }
+        };
+        var popupTemplate = {
+          title: a.title,
+          content: `
+            <b>Opis:</b> ${a.description}<br>
+            <b>Miejsce:</b> ${a.place}<br>
+            <b>Data:</b> ${a.date}<br>
+            <b>Autor:</b> ${a.author || ''}<br>
+            ${a.photo_url ? `<img src="${a.photo_url}" alt="awaria" style="max-width:180px;max-height:140px;display:block;margin:10px 0;">` : ""}
+          `
+        };
+        var graphic = new Graphic({
+          geometry: point,
+          symbol: markerSymbol,
+          popupTemplate: popupTemplate
+        });
+        awarieLayer.add(graphic);
+      });
+    });
+
+  // Spotkania
+  fetch("/api/spotkania")
+    .then(resp => resp.json())
+    .then(data => {
+      data.forEach(function(s) {
+        if (s.x && s.y) {
+          var point = {
+            type: "point",
+            longitude: s.x,
+            latitude: s.y
+          };
+          var markerSymbol = {
+            type: "simple-marker",
+            color: [32, 98, 214, 0.90], // NIEBIESKI
+            size: 16,
+            outline: { color: "#fff", width: 1.5 }
+          };
+          var popupTemplate = {
+            title: s.sport + " – " + s.place,
+            content: `
+              <b>Data:</b> ${s.date} godz. ${s.time}<br>
+              <b>Organizator:</b> ${s.organizer}
+            `
+          };
+          var graphic = new Graphic({
+            geometry: point,
+            symbol: markerSymbol,
+            popupTemplate: popupTemplate
+          });
+          spotkaniaLayer.add(graphic);
+        }
+      });
+    });
+
 });
+
 </script>
 </body>
 </html>

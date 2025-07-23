@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -7,6 +7,7 @@ import io
 
 app = Flask(__name__)
 app.secret_key = 'tajny_klucz'
+
 # Użyj PostgreSQL na produkcji, SQLite lokalnie
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
 db = SQLAlchemy(app)
@@ -20,7 +21,6 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
 
-
 class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
@@ -29,6 +29,8 @@ class Match(db.Model):
     sport = db.Column(db.String(32))
     place = db.Column(db.String(128))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    x = db.Column(db.Float)   # longitude
+    y = db.Column(db.Float)   # latitude
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,6 +40,8 @@ class Report(db.Model):
     date = db.Column(db.String(32))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     photo = db.Column(db.LargeBinary)
+    x = db.Column(db.Float)   # longitude
+    y = db.Column(db.Float)   # latitude
 
 class MatchSignup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -50,7 +54,7 @@ class MatchSignup(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Admin tylko dla admina
+# Panel admina tylko dla admina
 def admin_required(f):
     from functools import wraps
     @wraps(f)
@@ -71,11 +75,65 @@ def admin_users():
         "</table>"
     )
 
+# API do awarii na mapę
+@app.route('/api/awarie')
+def api_awarie():
+    awarie = Report.query.all()
+    result = []
+    for a in awarie:
+        author = User.query.get(a.user_id).username if a.user_id else "Brak"
+        photo_url = url_for('report_photo', report_id=a.id) if a.photo else None
+        result.append({
+            "title": a.title,
+            "description": a.description,
+            "place": a.place,
+            "date": a.date,
+            "x": a.x,
+            "y": a.y,
+            "author": author,
+            "photo_url": photo_url
+        })
+    return jsonify(result)
+
+# API do spotkań na mapę (nowe!)
+@app.route('/api/spotkania')
+def api_spotkania():
+    matches = Match.query.all()
+    result = []
+    for m in matches:
+        if m.x and m.y:
+            result.append({
+                "sport": m.sport,
+                "place": m.place,
+                "date": m.date,
+                "time": m.time,
+                "organizer": m.name,
+                "x": m.x,
+                "y": m.y
+            })
+    return jsonify(result)
+
 @app.route('/')
 def index():
+    user = current_user if current_user.is_authenticated else None
+    return render_template('index.html', user=user)
+
+@app.route('/spotkania')
+def meetings():
     matches = Match.query.order_by(Match.date, Match.time).all()
+    user = current_user if current_user.is_authenticated else None
+    return render_template('meetings.html', matches=matches, user=user)
+
+@app.route('/awarie')
+def issues():
     reports = Report.query.order_by(Report.date.desc()).all()
-    return render_template('index.html', matches=matches, reports=reports, user=current_user if current_user.is_authenticated else None)
+    user = current_user if current_user.is_authenticated else None
+    return render_template('issues.html', reports=reports, user=user)
+
+@app.route("/mapa")
+def mapa():
+    user = current_user if current_user.is_authenticated else None
+    return render_template("mapa.html", user=user)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -113,12 +171,16 @@ def logout():
 @app.route('/add_match', methods=['POST'])
 @login_required
 def add_match():
+    x = float(request.form['x']) if 'x' in request.form and request.form['x'] else None
+    y = float(request.form['y']) if 'y' in request.form and request.form['y'] else None
     m = Match(
         name=current_user.username,
         date=request.form['date'],
         time=request.form['time'],
         sport=request.form['sport'],
         place=request.form['place'],
+        x=x,
+        y=y,
         user_id=current_user.id
     )
     db.session.add(m)
@@ -131,12 +193,16 @@ def add_match():
 def report_issue():
     photo_file = request.files.get('photo')
     photo_data = photo_file.read() if photo_file and photo_file.filename else None
+    x = float(request.form['x']) if 'x' in request.form and request.form['x'] else None
+    y = float(request.form['y']) if 'y' in request.form and request.form['y'] else None
     r = Report(
         title=request.form['title'],
         description=request.form['description'],
         place=request.form['place'],
         date=request.form['date'],
         photo=photo_data,
+        x=x,
+        y=y,
         user_id=current_user.id
     )
     db.session.add(r)
@@ -156,24 +222,6 @@ def join_match(match_id):
     else:
         flash('Już jesteś zapisany na to spotkanie.')
     return redirect(url_for('index'))
-
-@app.route('/spotkania')
-def meetings():
-    matches = Match.query.order_by(Match.date, Match.time).all()
-    user = current_user if current_user.is_authenticated else None
-    return render_template('meetings.html', matches=matches, user=user)
-
-@app.route('/awarie')
-def issues():
-    reports = Report.query.order_by(Report.date.desc()).all()
-    user = current_user if current_user.is_authenticated else None
-    return render_template('issues.html', reports=reports, user=user)
-
-@app.route("/mapa")
-def mapa():
-    user = current_user if current_user.is_authenticated else None
-    return render_template("mapa.html", user=user)
-
 
 @app.route('/report_photo/<int:report_id>')
 def report_photo(report_id):
@@ -201,8 +249,3 @@ if __name__ == '__main__':
         db.create_all()
         ensure_default_users()
     app.run(debug=True)
-else:
-    with app.app_context():
-        db.create_all()
-        ensure_default_users()
-

@@ -93,7 +93,16 @@
                         <option value="Siatkówka">Siatkówka</option>
                     </select>
                 </label>
-                <label>Boisko / Lokalizacja: <input type="text" name="place" required></label>
+                <label>Boisko / Lokalizacja:
+                    <input type="text" name="place" id="place" required>
+                    <button type="button" onclick="geocodeMatchAddress()">Pobierz współrzędne</button>
+                </label>
+                <label>Długość geograficzna (x):
+                    <input type="number" step="any" name="x" id="lon" required readonly>
+                </label>
+                <label>Szerokość geograficzna (y):
+                    <input type="number" step="any" name="y" id="lat" required readonly>
+                </label>
                 <button type="submit">Dodaj spotkanie</button>
             </form>
         </div>
@@ -134,5 +143,21 @@
         {% endfor %}
     </div>
 </div>
+<script>
+function geocodeMatchAddress() {
+    var address = document.getElementById('place').value;
+    if (!address) return;
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+        .then(resp => resp.json())
+        .then(data => {
+            if(data.length > 0) {
+                document.getElementById('lon').value = data[0].lon;
+                document.getElementById('lat').value = data[0].lat;
+            } else {
+                alert("Nie znaleziono lokalizacji.");
+            }
+        });
+}
+</script>
 </body>
 </html>
