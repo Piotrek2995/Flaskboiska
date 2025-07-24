@@ -244,6 +244,10 @@ def ensure_default_users():
             db.session.add(user)
     db.session.commit()
 
+with app.app_context():
+    db.create_all()
+    ensure_default_users()
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
