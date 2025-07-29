@@ -4,6 +4,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import io
+import re
 
 app = Flask(__name__)
 app.secret_key = 'tajny_klucz'
@@ -140,6 +141,10 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        # Walidacja hasła: min. 1 cyfra i 1 wielka litera
+        if not re.search(r'[A-Z]', password) or not re.search(r'\d', password):
+            flash('Hasło musi zawierać co najmniej jedną wielką literę i jedną cyfrę.')
+            return redirect(url_for('register'))
         if User.query.filter_by(username=username).first():
             flash('Użytkownik już istnieje!')
             return redirect(url_for('register'))
