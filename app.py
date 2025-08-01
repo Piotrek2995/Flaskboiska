@@ -96,7 +96,7 @@ def api_awarie():
         })
     return jsonify(result)
 
-# API do spotkań na mapę (nowe!)
+# API do spotkań na mapę
 @app.route('/api/spotkania')
 def api_spotkania():
     matches = Match.query.all()
