@@ -36,21 +36,23 @@
         .logo { display: flex; align-items: center;}
         .icon-header { height: 36px; margin-right: 14px; vertical-align: middle; }
         .brand { font-family: 'Segoe UI', Arial, sans-serif; font-weight: 700; font-size: 1.4rem;}
-        .user-bar {
-            font-size: 1.08rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-    }
-        .logout, .user-bar a {
+        .user-bar a {
             color: #186637;
+            font-size: 1.08rem;
             font-weight: bold;
             text-decoration: none;
             margin-left: 18px;
-    }
-    .user-bar a:hover, .logout:hover { color: #0a4424; }
+        }
+        .user-bar a:hover { color: #0a4424; }
 
-
+        /* stan wyłączonego kafelka */
+        .disabled-link {
+            background: #ccc !important;
+            cursor: not-allowed;
+            pointer-events: none;
+            color: #666 !important;
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -61,8 +63,7 @@
     </span>
     <span class="user-bar">
         {% if user %}
-            Witaj, {{ user.username }}!
-            <a class="logout" href="/logout">Wyloguj się</a>
+            Witaj, {{ user.username }}! <a href="/logout">Wyloguj</a>
         {% else %}
             <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
         {% endif %}
@@ -72,35 +73,51 @@
 <div class="container">
     <h1>Witamy w SportMapper!</h1>
     <div class="main-links">
+
+        <!-- Spotkania -->
         <a href="/spotkania" class="main-link">
             <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
             Dodaj lub dołącz do spotkania
         </a>
+
+        <!-- Zgłoś awarię (Experience) – tylko admin aktywny -->
         <a
             {% if user and user.username == 'admin' %}
                 href="https://experience.arcgis.com/experience/cdd037b71fb74f33bdc1f6fabd7af70b"
                 class="main-link"
             {% else %}
                 href="#"
-                class="main-link" style="background:#ccc; cursor:not-allowed; pointer-events:none;"
+                class="main-link disabled-link"
             {% endif %}
         >
             <img src="{{ url_for('static', filename='awaria.png') }}" alt="icon" class="icon">
             Zgłoś awarię
         </a>
 
-        <a href="/mapa" class="main-link">
-            <img src="https://img.icons8.com/ios-filled/40/FFFFFF/map-marker.png" class="icon" alt="mapa">
+        <!-- Mapa boisk (Experience) – nowy kafelek -->
+        <a href="https://experience.arcgis.com/experience/d400320f027e43b5b2d699e0facc50a9?draft=true" class="main-link">
+            <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
             Mapa boisk
         </a>
+
+        <!-- Logowanie -->
         <a href="/login" class="main-link">
             <img src="https://img.icons8.com/ios-filled/40/FFFFFF/login-rounded-right.png" class="icon" alt="login">
             Logowanie
         </a>
+
+        <!-- Rejestracja -->
         <a href="/register" class="main-link">
             <img src="https://img.icons8.com/ios-filled/40/FFFFFF/add-user-group-man-man.png" class="icon" alt="register">
             Rejestracja
         </a>
+
+        <!-- --- NA DOLE: Mapa spotkań (nasza /mapa) --- -->
+        <a href="/mapa" class="main-link">
+            <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
+            Mapa spotkań
+        </a>
+
     </div>
     <div style="text-align:center; color:#999; font-size:1.04rem;">
         Platforma do zarządzania boiskami, spotkaniami i zgłaszania awarii.
