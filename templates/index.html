@@ -76,14 +76,19 @@
             <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
             Dodaj lub dołącz do spotkania
         </a>
-        <a href="/awarie" class="main-link">
+        <a
+            {% if user and user.username == 'admin' %}
+                href="https://experience.arcgis.com/experience/cdd037b71fb74f33bdc1f6fabd7af70b"
+                class="main-link"
+            {% else %}
+                href="#"
+                class="main-link" style="background:#ccc; cursor:not-allowed; pointer-events:none;"
+            {% endif %}
+        >
             <img src="{{ url_for('static', filename='awaria.png') }}" alt="icon" class="icon">
-            Zgłoś lub przejrzyj awarie
+            Zgłoś awarię
         </a>
-        <a href="/mapa" class="main-link">
-            <img src="https://img.icons8.com/ios-filled/40/FFFFFF/map-marker.png" class="icon" alt="mapa">
-            Mapa boisk
-        </a>
+
         <a href="/login" class="main-link">
             <img src="https://img.icons8.com/ios-filled/40/FFFFFF/login-rounded-right.png" class="icon" alt="login">
             Logowanie
