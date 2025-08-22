@@ -1,127 +1,127 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <title>SportMapper – start</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-        .container { max-width: 520px; margin: 60px auto 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px #0001; padding: 36px 40px;}
-        h1 { font-size: 2.1rem; color: #186637; text-align: center; margin-top: 8px;}
-        .main-links { display: flex; flex-direction: column; gap: 24px; margin: 38px 0 24px 0;}
-        .main-link {
-            display: flex; align-items: center; gap: 18px;
-            background: #25d366; color: #fff;
-            font-size: 1.25rem; font-weight: bold;
-            padding: 22px 18px;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px #0002;
-            text-decoration: none;
-            transition: background .2s, transform .15s;
-        }
-        .main-link:hover { background: #168046; transform: translateY(-2px) scale(1.03);}
-        .main-link .icon { height: 40px; }
-        .topbar {
-            background: #25d366;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 32px;
-            color: black;
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 10px #0001;
-        }
-        .logo { display: flex; align-items: center;}
-        .icon-header { height: 36px; margin-right: 14px; vertical-align: middle; }
-        .brand { font-family: 'Segoe UI', Arial, sans-serif; font-weight: 700; font-size: 1.4rem;}
-        .user-bar a {
-            color: #186637;
-            font-size: 1.08rem;
-            font-weight: bold;
-            text-decoration: none;
-            margin-left: 18px;
-        }
-        .user-bar a:hover { color: #0a4424; }
+  <meta charset="UTF-8" />
+  <title>SportMapper – start</title>
+  <style>
+    :root {
+      --green: #25d366;
+      --green-dark: #168046;
+      --shadow: 0 2px 10px #0001;
+      --radius: 14px;
+    }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; }
+    .topbar {
+      background: var(--green);
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; color: #000; box-shadow: var(--shadow);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .icon-header { height: 32px; }
+    .brand { font-weight: 700; font-size: 1.25rem; letter-spacing: .4px; }
 
-        /* stan wyłączonego kafelka */
-        .disabled-link {
-            background: #ccc !important;
-            cursor: not-allowed;
-            pointer-events: none;
-            color: #666 !important;
-            box-shadow: none;
-        }
-    </style>
+    .user-bar a { color: #186637; font-weight: 700; text-decoration: none; margin-left: 16px; }
+    .user-bar a:hover { color: #0a4424; }
+
+    .wrap { max-width: 880px; margin: 48px auto; padding: 0 20px; }
+    h1 { text-align: center; color: #186637; font-size: 2rem; margin: 0 0 22px; }
+
+    /* GRID – zawsze 2 kolumny, 1 kolumna tylko na małych ekranach */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--green); color: #fff; text-decoration: none;
+      padding: 18px 16px; border-radius: var(--radius); box-shadow: var(--shadow);
+      font-size: 1.08rem; font-weight: 700; transition: transform .15s, background .2s;
+    }
+    .card:hover { transform: translateY(-2px); background: var(--green-dark); }
+    .card .icon { height: 34px; }
+
+    .disabled {
+      background: #cfcfcf !important; color: #666 !important;
+      pointer-events: none; box-shadow: none;
+    }
+
+    .foot-note { text-align: center; color: #888; margin-top: 18px; }
+  </style>
 </head>
 <body>
-<div class="topbar">
-    <span class="logo">
-        <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon-header">
-        <span class="brand">SportMapper</span>
-    </span>
-    <span class="user-bar">
-        {% if user %}
-            Witaj, {{ user.username }}! <a href="/logout">Wyloguj</a>
-        {% else %}
-            <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
-        {% endif %}
-    </span>
-</div>
+  <div class="topbar">
+    <div class="logo">
+      <img class="icon-header" src="{{ url_for('static', filename='court-sport.png') }}" alt="icon">
+      <span class="brand">SportMapper</span>
+    </div>
+    <div class="user-bar">
+      {% if user %}
+        Witaj, {{ user.username }}! <a href="/logout">Wyloguj</a>
+      {% else %}
+        <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
+      {% endif %}
+    </div>
+  </div>
 
-<div class="container">
+  <div class="wrap">
     <h1>Witamy w SportMapper!</h1>
-    <div class="main-links">
 
-        <!-- Spotkania -->
-        <a href="/spotkania" class="main-link">
-            <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
-            Dodaj lub dołącz do spotkania
-        </a>
+    <div class="grid">
 
-        <!-- Zgłoś awarię (Experience) – tylko admin aktywny -->
-        <a
-            {% if user and user.username == 'admin' %}
-                href="https://experience.arcgis.com/experience/cdd037b71fb74f33bdc1f6fabd7af70b"
-                class="main-link"
-            {% else %}
-                href="#"
-                class="main-link disabled-link"
-            {% endif %}
-        >
-            <img src="{{ url_for('static', filename='awaria.png') }}" alt="icon" class="icon">
-            Zgłoś awarię
-        </a>
+      <!-- 1. Mapa boisk -->
+      <a class="card" href="https://experience.arcgis.com/experience/d400320f027e43b5b2d699e0facc50a9?draft=true">
+        <img class="icon" src="{{ url_for('static', filename='court-sport.png') }}" alt="">
+        Mapa boisk
+      </a>
 
-        <!-- Mapa boisk (Experience) – nowy kafelek -->
-        <a href="https://experience.arcgis.com/experience/d400320f027e43b5b2d699e0facc50a9?draft=true" class="main-link">
-            <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
-            Mapa boisk
-        </a>
+      <!-- 2. Mapa spotkań -->
+      <a class="card" href="/mapa">
+        <img class="icon" src="{{ url_for('static', filename='court-sport.png') }}" alt="">
+        Mapa spotkań
+      </a>
 
-        <!-- Logowanie -->
-        <a href="/login" class="main-link">
-            <img src="https://img.icons8.com/ios-filled/40/FFFFFF/login-rounded-right.png" class="icon" alt="login">
-            Logowanie
-        </a>
+      <!-- 3. Spotkania -->
+      <a class="card" href="/spotkania">
+        <img class="icon" src="{{ url_for('static', filename='court-sport.png') }}" alt="">
+        Dodaj lub dołącz do spotkania
+      </a>
 
-        <!-- Rejestracja -->
-        <a href="/register" class="main-link">
-            <img src="https://img.icons8.com/ios-filled/40/FFFFFF/add-user-group-man-man.png" class="icon" alt="register">
-            Rejestracja
-        </a>
+      <!-- 4. Zgłoś awarię -->
+      <a
+        {% if user and user.username == 'admin' %}
+          href="https://experience.arcgis.com/experience/cdd037b71fb74f33bdc1f6fabd7af70b"
+          class="card"
+        {% else %}
+          href="#"
+          class="card disabled"
+        {% endif %}
+      >
+        <img class="icon" src="{{ url_for('static', filename='awaria.png') }}" alt="">
+        Zgłoś awarię
+      </a>
 
-        <!-- --- NA DOLE: Mapa spotkań (nasza /mapa) --- -->
-        <a href="/mapa" class="main-link">
-            <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
-            Mapa spotkań
-        </a>
+      <!-- 5. Logowanie -->
+      <a class="card" href="/login">
+        <img class="icon" src="https://img.icons8.com/ios-filled/40/FFFFFF/login-rounded-right.png" alt="">
+        Logowanie
+      </a>
+
+      <!-- 6. Rejestracja -->
+      <a class="card" href="/register">
+        <img class="icon" src="https://img.icons8.com/ios-filled/40/FFFFFF/add-user-group-man-man.png" alt="">
+        Rejestracja
+      </a>
 
     </div>
-    <div style="text-align:center; color:#999; font-size:1.04rem;">
-        Platforma do zarządzania boiskami, spotkaniami i zgłaszania awarii.
+
+    <div class="foot-note">
+      Platforma do zarządzania boiskami, spotkaniami i zgłaszania awarii.
     </div>
-</div>
+  </div>
 </body>
 </html>
