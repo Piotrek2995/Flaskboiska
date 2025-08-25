@@ -99,20 +99,33 @@ def api_awarie():
 # API do spotkań na mapę
 @app.route('/api/spotkania')
 def api_spotkania():
+    # zakładam, że Match ma kolumny x, y (współrzędne) – jeśli nie, usuń te pola z dict
     matches = Match.query.all()
-    result = []
+    out = []
     for m in matches:
-        if m.x and m.y:
-            result.append({
-                "sport": m.sport,
-                "place": m.place,
-                "date": m.date,
-                "time": m.time,
-                "organizer": m.name,
-                "x": m.x,
-                "y": m.y
-            })
-    return jsonify(result)
+        organizer = None
+        if m.user_id:
+            u = User.query.get(m.user_id)
+            organizer = u.username if u else m.name
+        else:
+            organizer = m.name
+
+        # dzięki relacji backref='signups' w MatchSignup:
+        participants = [s.user.username for s in m.signups if s.user]
+
+        out.append({
+            "id": m.id,
+            "sport": m.sport,
+            "place": m.place,
+            "date": m.date,
+            "time": m.time,
+            "organizer": organizer,
+            "participants": participants,
+            "x": getattr(m, "x", None),
+            "y": getattr(m, "y", None),
+        })
+    return jsonify(out)
+
 
 @app.route('/')
 def index():

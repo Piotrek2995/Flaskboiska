@@ -57,8 +57,6 @@
     <b style="font-size:1.13rem">Legenda:</b><br>
     <span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:#2980ff;border:2px solid #2e4982;vertical-align:middle;margin-right:6px"></span>
     Spotkanie<br>
-    <span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:#e67e22;border:2px solid #7d3c98;vertical-align:middle;margin-right:6px"></span>
-    Awarie<br>
     <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#90ee90;border:2px solid #333;vertical-align:middle;margin-right:6px"></span>
     Boisko Piłkarskie<br>
     <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#FF0000 ;border:2px solid #333;vertical-align:middle;margin-right:6px"></span>
@@ -88,9 +86,9 @@ require([
   var spotkaniaLayer = new GraphicsLayer();
   webmap.add(spotkaniaLayer);
 
-  // Warstwa awarii (na samym wierzchu)
-  var awarieLayer = new GraphicsLayer();
-  webmap.add(awarieLayer);
+  {#// Warstwa awarii (na samym wierzchu)#}
+  {#var awarieLayer = new GraphicsLayer();#}
+  {#webmap.add(awarieLayer);#}
 
   // Dodaj spotkania
   fetch("/api/spotkania")
@@ -127,42 +125,7 @@ require([
       });
     });
 
-  // Dodaj awarie
-  fetch("/api/awarie")
-    .then(resp => resp.json())
-    .then(data => {
-      data.forEach(function(a) {
-        if (a.x && a.y) {
-          var point = {
-            type: "point",
-            longitude: a.x,
-            latitude: a.y
-          };
-          var markerSymbol = {
-            type: "simple-marker",
-            color: [230, 126, 34, 0.85], // pomarańczowy
-            size: 16,
-            outline: { color: "#7d3c98", width: 1.5 }
-          };
-          var popupTemplate = {
-            title: a.title,
-            content: `
-              <b>Opis:</b> ${a.description}<br>
-              <b>Miejsce:</b> ${a.place}<br>
-              <b>Data:</b> ${a.date}<br>
-              <b>Autor:</b> ${a.author || ''}<br>
-              ${a.photo_url ? `<img src="${a.photo_url}" alt="awaria" style="max-width:180px;max-height:140px;display:block;margin:10px 0;">` : ""}
-            `
-          };
-          var graphic = new Graphic({
-            geometry: point,
-            symbol: markerSymbol,
-            popupTemplate: popupTemplate
-          });
-          awarieLayer.add(graphic);
-        }
-      });
-    });
+
 
 });
 </script>
