@@ -5,17 +5,28 @@
   <title>SportMapper – start</title>
   <style>
     :root {
-      --green: #25d366;
-      --green-dark: #168046;
+      --green: linear-gradient(90deg, #00c6a7, #1e9b6c);
+      --green-dark: linear-gradient(90deg, #00967d, #157d56);
       --shadow: 0 2px 10px #0001;
       --radius: 14px;
     }
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; }
+     body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #E0FFDE url("{{ url_for('static', filename='pilki.png') }}") repeat;
+    background-size: 2000px; /* wielkość piłek w tle */
+  }
     .topbar {
-      background: var(--green);
-      height: 56px; display: flex; align-items: center; justify-content: space-between;
-      padding: 0 32px; color: #000; box-shadow: var(--shadow);
+      background: linear-gradient(90deg, #00c6a7, #1e9b6c);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      color: #000;
+      box-shadow: var(--shadow);
     }
+
     .logo { display: flex; align-items: center; gap: 12px; }
     .icon-header { height: 32px; }
     .brand { font-weight: 700; font-size: 1.25rem; letter-spacing: .4px; }
@@ -24,7 +35,7 @@
     .user-bar a:hover { color: #0a4424; }
 
     .wrap { max-width: 880px; margin: 48px auto; padding: 0 20px; }
-    h1 { text-align: center; color: #186637; font-size: 2rem; margin: 0 0 22px; }
+    h1 { text-align: center; color: #283328; font-size: 2rem; margin: 0 0 22px; }
 
     /* GRID – zawsze 2 kolumny, 1 kolumna tylko na małych ekranach */
     .grid {
@@ -50,7 +61,7 @@
       pointer-events: none; box-shadow: none;
     }
 
-    .foot-note { text-align: center; color: #888; margin-top: 27px; font-size: 1.3rem; }
+    .foot-note { text-align: center; color: #000000; margin-top: 27px; font-size: 1.3rem; }
   </style>
 </head>
 <body>
