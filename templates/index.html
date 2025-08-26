@@ -50,7 +50,7 @@
       pointer-events: none; box-shadow: none;
     }
 
-    .foot-note { text-align: center; color: #888; margin-top: 18px; }
+    .foot-note { text-align: center; color: #888; margin-top: 27px; font-size: 1.3rem; }
   </style>
 </head>
 <body>
@@ -86,10 +86,16 @@
       </a>
 
       <!-- 3. Spotkania -->
-      <a class="card" href="/spotkania">
-        <img class="icon" src="https://img.icons8.com/?size=100&id=10993&format=png&color=000000" alt="">
-        Dodaj lub dołącz do spotkania
-      </a>
+        <a {% if user %}
+                class="card" href="/spotkania"
+            {% else %}
+            href="#"
+            class="card disabled"
+          {% endif %}
+        >
+          <img class="icon" src="https://img.icons8.com/?size=100&id=10993&format=png&color=000000" alt="">
+          Dodaj lub dołącz do spotkania
+        </a>
 
       <!-- 4. Zgłoś awarię -->
       <a
@@ -102,7 +108,7 @@
         {% endif %}
       >
         <img class="icon" src="{{ url_for('static', filename='awaria.png') }}" alt="">
-        Zgłoś awarię
+        Zgłoś awarię (tylko administrator)
       </a>
 
       <!-- 5. Logowanie -->
@@ -121,6 +127,7 @@
 
     <div class="foot-note">
       Platforma do zarządzania boiskami, spotkaniami i zgłaszania awarii.
+        W celu uzyskania dostępu do funkcji dodawania i przęglądania spotkań, prosimy o rejestrację i zalogowanie się.
     </div>
   </div>
 </body>
