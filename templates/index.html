@@ -130,5 +130,48 @@
         W celu uzyskania dostępu do funkcji dodawania i przęglądania spotkań, prosimy o rejestrację i zalogowanie się.
     </div>
   </div>
+
+
+  <!-- Social media buttons -->
+  <div class="social-icons">
+    <a href="https://facebook.com" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/30/ffffff/facebook.png" alt="Facebook">
+    </a>
+    <a href="https://youtube.com" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/30/ffffff/youtube-play.png" alt="YouTube">
+    </a>
+  </div>
+
+  <style>
+    .social-icons {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 9999;
+    }
+    .social-icons a {
+      background: #25d366;
+      border-radius: 50%;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: transform .2s, background .2s;
+    }
+    .social-icons a:hover {
+      background: #168046;
+      transform: scale(1.1);
+    }
+    .social-icons img {
+      width: 28px;
+      height: 28px;
+    }
+  </style>
+
 </body>
 </html>
