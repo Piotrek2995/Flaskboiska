@@ -1,141 +1,108 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <title>SportMapper – Awarie</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 30px; }
-        .container { max-width: 700px; margin: auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px #0001; padding: 26px 32px;}
-        h2 { margin-bottom: 10px; }
-        form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;}
-        label { font-size: 15px; }
-        input, select, textarea { padding: 8px; border: 1px solid #aaa; border-radius: 4px; font-size: 15px;}
-        button { padding: 10px; background: #186637; color: #fff; border: none; border-radius: 4px; cursor: pointer;}
-        button:hover { background: #168046;}
-        .logout { font-size: 15px;}
-        .tab { margin-top: 20px; }
-        .report { background: #fff3e0; margin-bottom: 10px; padding: 10px 12px; border-radius: 6px; font-size: 15px;}
-        .msg { color: #e91c1c; margin-bottom: 12px; }
-        .menu { margin-bottom: 20px; }
-        .topbar {
-            background: #25d366;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            padding: 0 32px;
-            color: black;
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 10px #0001;
-            margin-bottom: 32px;
-            justify-content: space-between;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-        .icon {
-            height: 38px;
-            margin-right: 18px;
-            vertical-align: middle;
-        }
-        .brand {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-weight: 700;
-            font-size: 1.45rem;
-        }
-        .user-bar {
-            font-size: 1.1rem;
-        }
-        .logout, .user-bar a {
-            margin-left: 18px;
-            color: #186637;
-            font-weight: bold;
-            text-decoration: none;
-            transition: color .2s;
-        }
-        .user-bar a:hover { color: #0a4424; }
-    </style>
+  <meta charset="UTF-8">
+  <title>SportMapper – Zgłoś awarię</title>
+  <style>
+    :root {
+      --green: linear-gradient(90deg, #00c6a7, #1e9b6c);
+      --green-dark: linear-gradient(90deg, #00967d, #157d56);
+      --shadow: 0 2px 10px #0001;
+      --radius: 14px;
+    }
+    body { font-family: Arial, sans-serif; background: #E0FFDE; margin: 0; }
+    .topbar {
+      background: linear-gradient(90deg, #00c6a7, #1e9b6c);
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; color: #000; box-shadow: var(--shadow);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration:none; color: inherit; }
+    .icon-header { height: 32px; }
+    .brand { font-weight: 700; font-size: 1.25rem; letter-spacing: .4px; }
+
+    .user-bar a { color: #186637; font-weight: 700; text-decoration: none; margin-left: 16px; }
+    .user-bar a:hover { color: #0a4424; }
+
+    .wrap { max-width: 880px; margin: 48px auto; padding: 0 20px; }
+    h1 { text-align: center; color: #283328; font-size: 2rem; margin: 0 0 22px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--green); color: #fff; text-decoration: none;
+      padding: 18px 16px; border-radius: var(--radius); box-shadow: var(--shadow);
+      font-size: 1.08rem; font-weight: 700; transition: transform .15s, background .2s;
+    }
+    .card:hover { transform: translateY(-2px); background: var(--green-dark); }
+    .card .icon { height: 34px; }
+
+    .disabled { background: #cfcfcf !important; color: #666 !important; pointer-events: none; box-shadow: none; }
+
+    .section-title { margin: 28px 0 10px; font-weight: 700; color: #1b3a2f; }
+    .note { color:#5f6f64; margin-top: 22px; line-height:1.5; text-align:center; }
+    .admin-panel { margin-top: 30px; text-align: center; }
+    .admin-panel .card { display:inline-flex; justify-content:center; min-width:280px; }
+  </style>
 </head>
 <body>
-<div class="topbar">
-    <span class="logo">
-        <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
-        <span class="brand">SportMapper</span>
-    </span>
-    <span class="user-bar">
-        {% if user %}
-            <span>Witaj, {{ user.username }}!</span>
-            <a class="logout" href="/logout">Wyloguj się</a>
-        {% else %}
-            <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
-        {% endif %}
-    </span>
-</div>
-<div class="container">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="msg">{{ messages[0] }}</div>
+  <div class="topbar">
+    <a href="/" class="logo">
+      <img class="icon-header" src="{{ url_for('static', filename='court-sport.png') }}" alt="icon">
+      <span class="brand">SportMapper</span>
+    </a>
+    <div class="user-bar">
+      {% if user %}
+        Witaj, {{ user.username }}! <a href="/logout">Wyloguj</a>
+      {% else %}
+        <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
       {% endif %}
-    {% endwith %}
-
-    {% if user %}
-        <div class="menu" style="margin-bottom:18px;">
-            <h2>Zgłoś awarię</h2>
-            <form action="/report_issue" method="POST" enctype="multipart/form-data">
-                <label>Tytuł awarii: <input type="text" name="title" required></label>
-                <label>Opis: <textarea name="description" required></textarea></label>
-                <label>Boisko / Lokalizacja:
-                  <input type="text" name="place" id="address" required>
-                  <button type="button" onclick="geocodeAddress()">Pobierz współrzędne</button>
-                </label>
-                <label>Data zgłoszenia: <input type="date" name="date" required></label>
-                <label>Zdjęcie (opcjonalnie): <input type="file" name="photo" accept="image/*"></label>
-                <label>Długość geograficzna (x):
-                  <input type="number" step="any" name="x" id="lon" required readonly>
-                </label>
-                <label>Szerokość geograficzna (y):
-                  <input type="number" step="any" name="y" id="lat" required readonly>
-                </label>
-                <button type="submit">Zgłoś awarię</button>
-            </form>
-            <script>
-            function geocodeAddress() {
-              var address = document.getElementById('address').value;
-              if (!address) return;
-              fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
-                .then(resp => resp.json())
-                .then(data => {
-                  if(data.length > 0) {
-                    document.getElementById('lon').value = data[0].lon;
-                    document.getElementById('lat').value = data[0].lat;
-                  } else {
-                    alert("Nie znaleziono lokalizacji.");
-                  }
-                });
-            }
-            </script>
-
-
-        </div>
-    {% endif %}
-    <div class="tab">
-        <h2>Zgłoszone awarie</h2>
-        {% for r in reports %}
-        <div class="report">
-            <b>{{ r.title }}</b> – <b>{{ r.place }}</b><br>
-            {{ r.description }}<br>
-            Data: {{ r.date }}
-            {% if r.photo %}
-                <br>
-                <img src="{{ url_for('report_photo', report_id=r.id) }}" alt="zdjęcie awarii" style="max-width:160px;max-height:120px;">
-            {% endif %}
-        </div>
-        {% else %}
-        <p>Brak zgłoszonych awarii.</p>
-        {% endfor %}
     </div>
-</div>
+  </div>
+
+  <div class="wrap">
+    <h1>Zgłoś awarię</h1>
+
+    <div class="section-title">Wybierz dyscyplinę i wypełnij krótki formularz:</div>
+    <div class="grid">
+      <!-- Koszykówka -->
+      <a class="card" href="https://survey123.arcgis.com/share/64cf061e8337487eb1a54a753f3b954e" target="_blank" rel="noopener">
+        <img class="icon" src="{{ url_for('static', filename='basketball.png') }}" alt="">
+        Boiska do koszykówki
+      </a>
+
+      <!-- Piłka nożna -->
+      <a class="card" href="https://survey123.arcgis.com/share/2897194b3e264828a0b388d76c1c3e21" target="_blank" rel="noopener">
+        <img class="icon" src="{{ url_for('static', filename='football.png') }}" alt="">
+        Boiska do piłki nożnej
+      </a>
+    </div>
+
+        <div class="admin-panel">
+      <div class="section-title">Panel przeglądania (administrator):</div>
+      <a
+        {% if user and user.username == 'admin' %}
+          class="card"
+          href="https://experience.arcgis.com/experience/cdd037b71fb74f33bdc1f6fabd7af70b" target="_blank" rel="noopener"
+        {% else %}
+          class="card disabled"
+          href="#"
+        {% endif %}
+      >
+        <img class="icon" src="{{ url_for('static', filename='awaria.png') }}" alt="">
+        Otwórz panel awarii
+      </a>
+    </div>
+
+
+    <div class="note">
+      Dziękujemy za pomoc w utrzymaniu boisk! 🙌
+    </div>
+  </div>
 </body>
 </html>

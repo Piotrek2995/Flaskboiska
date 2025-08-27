@@ -1,79 +1,168 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <title>SportMapper – Spotkania</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 30px; }
-        .container { max-width: 700px; margin: auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px #0001; padding: 26px 32px;}
-        h2 { margin-bottom: 10px; }
-        form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;}
-        label { font-size: 15px; }
-        input, select, textarea { padding: 8px; border: 1px solid #aaa; border-radius: 4px; font-size: 15px;}
-        button { padding: 10px; background: #186637; color: #fff; border: none; border-radius: 4px; cursor: pointer;}
-        button:hover { background: #168046;}
-        .logout { font-size: 15px;}
-        .tab { margin-top: 20px; }
-        .match { background: #e8f5e9; margin-bottom: 10px; padding: 10px 12px; border-radius: 6px; font-size: 15px;}
-        .msg { color: #e91c1c; margin-bottom: 12px; }
-        .menu { margin-bottom: 20px; }
-        .topbar {
-            background: #25d366;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            padding: 0 32px;
-            color: black;
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 10px #0001;
-            margin-bottom: 32px;
-            justify-content: space-between;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-        .icon {
-            height: 38px;
-            margin-right: 18px;
-            vertical-align: middle;
-        }
-        .brand {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-weight: 700;
-            font-size: 1.45rem;
-        }
-        .user-bar {
-            font-size: 1.1rem;
-        }
-        .logout, .user-bar a {
-            margin-left: 18px;
-            color: #186637;
-            font-weight: bold;
-            text-decoration: none;
-            transition: color .2s;
-        }
-        .user-bar a:hover { color: #0a4424; }
-    </style>
+  <meta charset="UTF-8" />
+  <title>SportMapper – Spotkania</title>
+  <style>
+    :root{
+      --green: linear-gradient(90deg, #00c6a7, #1e9b6c);
+      --green-dark: linear-gradient(90deg, #00967d, #157d56);
+      --shadow: 0 2px 10px #0001;
+      --radius: 14px;
+    }
+
+    body{
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #E0FFDE;
+    }
+
+    /* TOPBAR jak na innych stronach */
+    .topbar{
+      background: var(--green);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      color: #000;
+      box-shadow: var(--shadow);
+    }
+    .logo{
+      display:flex; align-items:center; gap:12px;
+      text-decoration:none; color:inherit;
+    }
+    .icon-header{ height:32px; }
+    .brand{ font-weight:700; font-size:1.25rem; letter-spacing:.4px; }
+
+    .user-bar a{ color:#186637; font-weight:700; text-decoration:none; margin-left:16px; }
+    .user-bar a:hover{ color:#0a4424; }
+
+    /* GŁÓWNA ZAWARTOŚĆ */
+    .wrap{
+      max-width: 880px;
+      margin: 36px auto;
+      padding: 0 20px 36px;
+    }
+    h1{ text-align:center; color:#283328; font-size:2rem; margin:0 0 22px; }
+
+    .card{
+      background:#fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 22px;
+    }
+
+    .section{
+      margin-top: 22px;
+    }
+    .section h2{
+      margin: 0 0 12px;
+      font-size: 1.2rem;
+      color:#1b3a2f;
+    }
+
+    /* FORMULARZ */
+    form#matchForm{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+    }
+    form#matchForm label{
+      display:flex;
+      flex-direction:column;
+      font-size: 0.95rem;
+      color:#1f2b22;
+      gap:6px;
+    }
+    form#matchForm input,
+    form#matchForm select{
+      padding:10px;
+      border:1px solid #cfd8d2;
+      border-radius:8px;
+      font-size:0.98rem;
+      outline:none;
+    }
+    .full{ grid-column: 1 / -1; }
+
+    .btn{
+      background: var(--green);
+      color:#fff;
+      border:none;
+      padding:12px 16px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      width:100%;
+      transition: transform .1s ease, opacity .2s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:disabled{ opacity:.6; cursor: default; }
+
+    /* LISTA SPOTKAŃ */
+    .match{
+      background:#f1fbf1;
+      border:1px solid #cfe8d0;
+      border-radius:12px;
+      padding:14px 16px;
+      margin-bottom:12px;
+    }
+    .match-title{
+      font-weight:700;
+      margin-bottom:4px;
+      color:#173c2b;
+    }
+    .match small{ color:#3b4a41; }
+
+    .match .actions{
+      margin-top:12px;
+    }
+    .match .actions form{ margin:0; }
+    .join-btn{
+      background:#186637;
+      color:#fff;
+      border:none;
+      padding:10px 12px;
+      border-radius:8px;
+      cursor:pointer;
+    }
+    .join-btn:hover{ opacity:.9; }
+
+    .msg{
+      background:#fff3cd;
+      border:1px solid #ffe49a;
+      color:#7a5d00;
+      padding:10px 14px;
+      border-radius:10px;
+      margin: 0 0 14px 0;
+    }
+
+    @media (max-width:700px){
+      form#matchForm{ grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-<div class="topbar">
-    <span class="logo">
-        <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon">
-        <span class="brand">SportMapper</span>
-    </span>
-    <span class="user-bar">
-        {% if user %}
-            <span>Witaj, {{ user.username }}!</span>
-            <a class="logout" href="/logout">Wyloguj się</a>
-        {% else %}
-            <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
-        {% endif %}
-    </span>
-</div>
-<div class="container">
+
+  <!-- Nagłówek -->
+  <div class="topbar">
+    <a href="/" class="logo">
+      <img class="icon-header" src="{{ url_for('static', filename='court-sport.png') }}" alt="icon">
+      <span class="brand">SportMapper</span>
+    </a>
+    <div class="user-bar">
+      {% if user %}
+        Witaj, {{ user.username }}! <a href="/logout">Wyloguj</a>
+      {% else %}
+        <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <h1>Spotkania</h1>
+
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <div class="msg">{{ messages[0] }}</div>
@@ -81,83 +170,128 @@
     {% endwith %}
 
     {% if user %}
-        <div class="menu" style="margin-bottom:18px;">
-            <h2>Dodaj spotkanie</h2>
-            <form action="/add_match" method="POST">
-                <label>Dzień: <input type="date" name="date" required></label>
-                <label>Godzina: <input type="time" name="time" required></label>
-                <label>Sport:
-                    <select name="sport" required>
-                        <option value="Piłka nożna">Piłka nożna</option>
-                        <option value="Koszykówka">Koszykówka</option>
-                        <option value="Siatkówka">Siatkówka</option>
-                    </select>
-                </label>
-                <label>Boisko / Lokalizacja:
-                    <input type="text" name="place" id="place" required>
-                    <button type="button" onclick="geocodeMatchAddress()">Pobierz współrzędne</button>
-                </label>
-                <label>Długość geograficzna (x):
-                    <input type="number" step="any" name="x" id="lon" required readonly>
-                </label>
-                <label>Szerokość geograficzna (y):
-                    <input type="number" step="any" name="y" id="lat" required readonly>
-                </label>
-                <button type="submit">Dodaj spotkanie</button>
-            </form>
+    <!-- Dodawanie spotkania -->
+    <div class="card section">
+      <h2>Dodaj spotkanie</h2>
+      <form id="matchForm" action="/add_match" method="POST" novalidate>
+        <label>
+          Dzień
+          <input type="date" name="date" required>
+        </label>
+
+        <label>
+          Godzina
+          <input type="time" name="time" required>
+        </label>
+
+        <label>
+          Sport
+          <select name="sport" required>
+            <option value="Piłka nożna">Piłka nożna</option>
+            <option value="Koszykówka">Koszykówka</option>
+            <option value="Siatkówka">Siatkówka</option>
+          </select>
+        </label>
+
+        <label class="full">
+          Boisko / Lokalizacja
+          <input type="text" name="place" id="place" placeholder="np. Warszawa, Broniewskiego 99a" required>
+        </label>
+
+        <!-- ukryte, automatycznie uzupełniane współrzędne -->
+        <input type="hidden" name="x" id="lon" required>
+        <input type="hidden" name="y" id="lat" required>
+
+        <div class="full">
+          <button type="submit" class="btn" id="submitBtn">Dodaj spotkanie</button>
         </div>
-    {% endif %}
-    <div class="tab">
-        <h2>Lista spotkań</h2>
-        {% for m in matches %}
-        <div class="match">
-            <b>{{ m.sport }}</b> – <b>{{ m.place }}</b><br>
-            {{ m.date }} godz. {{ m.time }}<br>
-            Organizator: {{ m.name }}<br>
-            <u>Lista zapisanych:</u>
-            <ul style="margin: 2px 0 0 12px; padding: 0;">
-                {% for signup in m.signups %}
-                    <li>{{ signup.user.username }}</li>
-                {% else %}
-                    <li>Brak zapisanych</li>
-                {% endfor %}
-            </ul>
-            {% if user.is_authenticated %}
-                {% set already = false %}
-                {% for signup in m.signups %}
-                    {% if signup.user_id == user.id %}
-                        {% set already = true %}
-                    {% endif %}
-                {% endfor %}
-                {% if not already %}
-                    <form method="post" action="{{ url_for('join_match', match_id=m.id) }}">
-                        <button type="submit">Dołącz do spotkania</button>
-                    </form>
-                {% else %}
-                    <em>Jesteś już zapisany</em>
-                {% endif %}
-            {% endif %}
-        </div>
-        {% else %}
-        <p>Brak spotkań.</p>
-        {% endfor %}
+      </form>
     </div>
-</div>
-<script>
-function geocodeMatchAddress() {
-    var address = document.getElementById('place').value;
-    if (!address) return;
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
-        .then(resp => resp.json())
-        .then(data => {
-            if(data.length > 0) {
-                document.getElementById('lon').value = data[0].lon;
-                document.getElementById('lat').value = data[0].lat;
-            } else {
-                alert("Nie znaleziono lokalizacji.");
+    {% endif %}
+
+    <!-- Lista spotkań -->
+    <div class="card section">
+      <h2>Lista spotkań</h2>
+
+      {% for m in matches %}
+        <div class="match">
+          <div class="match-title">{{ m.sport }} – {{ m.place }}</div>
+          <small>{{ m.date }} godz. {{ m.time }}</small><br>
+          <small>Organizator: {{ m.name }}</small>
+
+          <div style="margin-top:8px;">
+            <u>Lista zapisanych:</u>
+            <ul style="margin:8px 0 0 16px;">
+              {% for signup in m.signups %}
+                <li>{{ signup.user.username }}</li>
+              {% else %}
+                <li>Brak zapisanych</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          {% if user and user.is_authenticated %}
+            {% set already = false %}
+            {% for signup in m.signups %}
+              {% if signup.user_id == user.id %}
+                {% set already = true %}
+              {% endif %}
+            {% endfor %}
+            <div class="actions">
+              {% if not already %}
+                <form method="post" action="{{ url_for('join_match', match_id=m.id) }}">
+                  <button class="join-btn" type="submit">Dołącz do spotkania</button>
+                </form>
+              {% else %}
+                <em>Jesteś już zapisany</em>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <p>Brak spotkań.</p>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <!-- Automatyczne geokodowanie przy wysyłce -->
+  <script>
+    const form = document.getElementById('matchForm');
+    if (form){
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+
+        const address = document.getElementById('place').value.trim();
+        if(!address){
+          alert("Podaj lokalizację.");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+          .then(resp => resp.json())
+          .then(data => {
+            if(Array.isArray(data) && data.length > 0){
+              document.getElementById('lon').value = data[0].lon;
+              document.getElementById('lat').value = data[0].lat;
+              // po udanym geokodowaniu wyślij formularz
+              form.submit();
+            }else{
+              alert("Nie znaleziono lokalizacji. Spróbuj podać dokładniejszy adres.");
+              submitBtn.disabled = false;
             }
-        });
-}
-</script>
+          })
+          .catch(() => {
+            alert("Błąd geokodowania – spróbuj ponownie.");
+            submitBtn.disabled = false;
+          });
+      });
+    }
+  </script>
+
 </body>
 </html>

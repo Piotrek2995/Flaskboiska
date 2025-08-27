@@ -11,11 +11,22 @@
       --radius: 14px;
     }
      body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #E0FFDE url("{{ url_for('static', filename='pilki.png') }}") repeat;
-    background-size: 2000px; /* wielkość piłek w tle */
-  }
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #E0FFDE url("{{ url_for('static', filename='pilki.png') }}") repeat;
+      background-size: 2000px;
+      position: relative;
+    }
+     body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(224, 255, 222, 0.25); /* lekko zielone, półprzezroczyste */
+      z-index: -1; /* żeby nie zasłaniało treści */
+    }
     .topbar {
       background: linear-gradient(90deg, #00c6a7, #1e9b6c);
       height: 56px;
@@ -109,18 +120,17 @@
         </a>
 
       <!-- 4. Zgłoś awarię -->
-      <a
-        {% if user and user.username == 'admin' %}
-          href="https://experience.arcgis.com/experience/cdd037b71fb74f33bdc1f6fabd7af70b"
-          class="card"
-        {% else %}
-          href="#"
-          class="card disabled"
-        {% endif %}
-      >
-        <img class="icon" src="{{ url_for('static', filename='awaria.png') }}" alt="">
-        Zgłoś awarię (tylko administrator)
-      </a>
+        <a
+          {% if user %}
+            href="/awarie" class="card"
+          {% else %}
+            href="#" class="card disabled"
+          {% endif %}
+        >
+          <img class="icon" src="{{ url_for('static', filename='awaria.png') }}" alt="">
+          Zgłoś awarię
+        </a>
+
 
       <!-- 5. Logowanie -->
       <a class="card" href="/login">
