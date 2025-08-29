@@ -24,16 +24,16 @@
     .user-bar a:hover{ color:#0a4424; }
 
     #viewDiv{
-      height: calc(100vh - 56px);
+      height: calc(100vh - 73px);
       width: calc(100vw - 64px);
-      margin: 16px 32px 24px;
+      margin: 10px 32px 5px;
       border-radius: var(--radius);
       box-shadow: 0 2px 10px #0002;
       overflow: hidden;
       position: relative;
     }
 
-    /* Legend box (zostawiony jak miałeś) */
+    /* Legend box  */
     #map-legend{
       position:absolute; top:18px; right:18px; z-index: 10;
       background:#fff; border-radius:10px; box-shadow:0 2px 8px #0001;
@@ -46,7 +46,7 @@
       margin-right:8px; vertical-align:middle; border:2px solid #333;
     }
 
-    /* Panel warstw (nasze przełączniki) */
+    /* Panel warstw  */
     #layers-panel{
       position:absolute; top:18px; left:18px; z-index:10;
       background:#fff; border-radius:10px; box-shadow:0 2px 8px #0001;
@@ -79,7 +79,7 @@
       <label><input type="checkbox" id="chk-spotkania" checked> Spotkania</label>
     </div>
 
-    <!-- Legenda (jak wcześniej) -->
+    <!-- Legenda -->
     <div id="map-legend">
       <b>Legenda:</b><br>
       <span class="swatch" style="background:#2980ff;border-color:#2e4982;"></span>Spotkanie<br>
@@ -163,11 +163,7 @@
       setBoiskaVisibility(true);
       setSpotkaniaVisibility(true);
 
-      /* Jeśli kiedyś będziesz chciał rozbić „Boiska” na 2 przełączniki:
-         const pilkarskie = webmap.layers.find(l => (l.title||"").toLowerCase().includes("piłk"));
-         const koszykarskie = webmap.layers.find(l => (l.title||"").toLowerCase().includes("koszyk"));
-         i potem pilkarskie.visible = ..., koszykarskie.visible = ...
-      */
+
     });
   </script>
 </body>
