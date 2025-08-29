@@ -1,91 +1,104 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>SportMapper – Mapa boisk</title>
-  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+  <meta charset="UTF-8" />
+  <title>SportMapper – Mapa</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css"/>
   <script src="https://js.arcgis.com/4.29/"></script>
   <style>
-    body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: #f4f4f4; }
-
-    /* Pasek jak w login/register */
-    .topbar {
-      background: linear-gradient(90deg, #00c6a7, #1e9b6c);
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 32px;
-      color: #000;
-      box-shadow: 0 2px 10px #0001;
+    :root{
+      --green: linear-gradient(90deg, #00c6a7, #1e9b6c);
+      --shadow: 0 2px 10px #0001;
+      --radius: 12px;
     }
-    .logo { display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
-    .icon-header { height:36px; margin-right:3px; vertical-align:middle; }
-    .brand { font-family:'Segoe UI', Arial, sans-serif; font-weight:700; font-size:1.25rem; }
-
-    .user-bar { font-size: 1.1rem; }
-    .user-bar a {
-      margin-left: 16px;
-      color: #186637;
-      font-weight: bold;
-      text-decoration: none;
+    body{ margin:0; font-family: Arial, sans-serif; background:#E0FFDE; }
+    .topbar{
+      background: var(--green);
+      height:56px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 32px; color:#000; box-shadow: var(--shadow);
     }
-    .user-bar a:hover { color: #0a4424; }
+    .logo{ display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
+    .icon-header{ height:32px; }
+    .brand{ font-weight:700; font-size:1.25rem; letter-spacing:.4px; }
+    .user-bar a{ color:#186637; font-weight:700; text-decoration:none; margin-left:16px; }
+    .user-bar a:hover{ color:#0a4424; }
 
-    #viewDiv {
-      height: 600px;
-      width: 96vw;
-      max-width: 1400px;
-      margin: 40px auto 0 auto;
-      border-radius: 12px;
+    #viewDiv{
+      height: calc(100vh - 56px);
+      width: calc(100vw - 64px);
+      margin: 16px 32px 24px;
+      border-radius: var(--radius);
       box-shadow: 0 2px 10px #0002;
+      overflow: hidden;
       position: relative;
     }
+
+    /* Legend box (zostawiony jak miałeś) */
+    #map-legend{
+      position:absolute; top:18px; right:18px; z-index: 10;
+      background:#fff; border-radius:10px; box-shadow:0 2px 8px #0001;
+      padding:12px 16px; font-size: 15px; line-height:1.9;
+      min-width: 230px;
+    }
+    #map-legend b{ font-size: 16px; }
+    #map-legend .swatch{
+      display:inline-block; width:14px; height:14px; border-radius:50%;
+      margin-right:8px; vertical-align:middle; border:2px solid #333;
+    }
+
+    /* Panel warstw (nasze przełączniki) */
+    #layers-panel{
+      position:absolute; top:18px; left:18px; z-index:10;
+      background:#fff; border-radius:10px; box-shadow:0 2px 8px #0001;
+      padding:12px 16px; font-size: 15px;
+    }
+    #layers-panel label{ display:flex; align-items:center; gap:8px; margin:4px 0; cursor:pointer; }
+    #layers-panel input{ transform: scale(1.2); }
   </style>
 </head>
 <body>
   <div class="topbar">
     <a href="/" class="logo">
-        <img src="{{ url_for('static', filename='court-sport.png') }}" alt="icon" class="icon-header">
-        <span class="brand">SportMapper</span>
+      <img class="icon-header" src="{{ url_for('static', filename='court-sport.png') }}" alt="icon">
+      <span class="brand">SportMapper</span>
     </a>
-      <span class="user-bar">
+    <div class="user-bar">
       {% if user %}
-        Witaj, {{ user.username }}!
-        <a class="logout" href="/logout">Wyloguj się</a>
+        Witaj, {{ user.username }}! <a href="/logout">Wyloguj</a>
       {% else %}
         <a href="/login">Zaloguj się</a> | <a href="/register">Rejestracja</a>
       {% endif %}
-    </span>
+    </div>
   </div>
 
-  <div id="viewDiv"></div>
+  <div id="viewDiv">
+    <!-- Panel warstw -->
+    <div id="layers-panel">
+      <b>Warstwy</b>
+      <label><input type="checkbox" id="chk-boiska" checked> Boiska</label>
+      <label><input type="checkbox" id="chk-spotkania" checked> Spotkania</label>
+    </div>
 
-  <div id="map-legend" style="
-      position: absolute;
-      top: 100px; right: 24px; z-index: 99;
-      background: #fff; border-radius: 9px; box-shadow: 0 2px 8px #0001;
-      padding: 14px 22px; font-size: 1.06rem; line-height: 2;">
-    <b style="font-size:1.13rem">Legenda:</b><br>
-    <span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:#2980ff;border:2px solid #2e4982;vertical-align:middle;margin-right:6px"></span>
-    Spotkanie<br>
-    <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#90ee90;border:2px solid #333;vertical-align:middle;margin-right:6px"></span>
-    Boisko piłkarskie<br>
-    <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#FF0000;border:2px solid #333;vertical-align:middle;margin-right:6px"></span>
-    Boisko koszykarskie<br>
+    <!-- Legenda (jak wcześniej) -->
+    <div id="map-legend">
+      <b>Legenda:</b><br>
+      <span class="swatch" style="background:#2980ff;border-color:#2e4982;"></span>Spotkanie<br>
+      <span class="swatch" style="background:#90ee90;"></span>Boisko piłkarskie<br>
+      <span class="swatch" style="background:#FF0000;"></span>Boisko koszykarskie
+    </div>
   </div>
 
   <script>
     require([
-      "esri/Map",
-      "esri/views/MapView",
       "esri/WebMap",
+      "esri/views/MapView",
       "esri/Graphic",
       "esri/layers/GraphicsLayer"
-    ], function (Map, MapView, WebMap, Graphic, GraphicsLayer) {
+    ], function(WebMap, MapView, Graphic, GraphicsLayer){
 
+      // 1) WebMap z boiskiem(i)
       const webmap = new WebMap({
-        portalItem: { id: "8db564340ff24222b38102964f601dd4" }
+        portalItem: { id: "8db564340ff24222b38102964f601dd4" } // Twój WebMap
       });
 
       const view = new MapView({
@@ -94,40 +107,67 @@
         zoom: 11
       });
 
-      // Warstwa spotkań (na górze)
-      const spotkaniaLayer = new GraphicsLayer();
-      webmap.add(spotkaniaLayer);
+      // 2) Warstwa SPOTKAŃ (nasza dynamiczna)
+      const spotkaniaLayer = new GraphicsLayer({ title: "Spotkania (dynamiczne)" });
+      webmap.add(spotkaniaLayer); // dodajemy NAD warstwy WebMapy
 
-      // Dane spotkań z API
-      fetch("/api/spotkania")
-        .then(resp => resp.json())
-        .then(data => {
-          data.forEach(s => {
-            if (s.x && s.y) {
+      // 3) Po załadowaniu widoku dociągamy spotkania
+      view.when(function(){
+        fetch("/api/spotkania")
+          .then(r => r.json())
+          .then(data => {
+            data.forEach(s => {
+              if(!s.x || !s.y) return;
               const point = { type: "point", longitude: s.x, latitude: s.y };
-              const markerSymbol = {
+              const symbol = {
                 type: "simple-marker",
-                color: [32, 98, 214, 0.9],   // niebieski
+                color: [32, 98, 214, 0.9], // niebieski
                 size: 16,
-                outline: { color: "#000000", width: 1 }
+                outline: { color: "#000", width: 1 }
               };
-              const popupTemplate = {
-                title: s.sport + " – " + s.place,
+              const tpl = {
+                title: `${s.sport} – ${s.place}`,
                 content: `
                   <b>Data:</b> ${s.date} godz. ${s.time}<br>
                   <b>Organizator:</b> ${s.organizer || s.name || ""}<br>
                   <b>Uczestnicy:</b> ${(s.participants || []).join(', ')}
                 `
               };
-              const graphic = new Graphic({
-                geometry: point,
-                symbol: markerSymbol,
-                popupTemplate
-              });
-              spotkaniaLayer.add(graphic);
-            }
+              spotkaniaLayer.add(new Graphic({ geometry: point, symbol, popupTemplate: tpl }));
+            });
           });
+      });
+
+      // 4) Przełączniki widoczności
+      const chkBoiska = document.getElementById("chk-boiska");
+      const chkSpotkania = document.getElementById("chk-spotkania");
+
+      // Uwaga: webmap.layers zawiera wszystkie warstwy operacyjne (w tym nasz GraphicsLayer).
+      // Chcemy, aby "Boiska" sterowały TYLKO warstwami z WebMapy (nie naszymi spotkaniami).
+      function setBoiskaVisibility(visible){
+        webmap.layers.forEach(layer => {
+          if(layer !== spotkaniaLayer){
+            layer.visible = visible;
+          }
         });
+      }
+
+      function setSpotkaniaVisibility(visible){
+        spotkaniaLayer.visible = visible;
+      }
+
+      chkBoiska.addEventListener("change", () => setBoiskaVisibility(chkBoiska.checked));
+      chkSpotkania.addEventListener("change", () => setSpotkaniaVisibility(chkSpotkania.checked));
+
+      // Ustawienia startowe
+      setBoiskaVisibility(true);
+      setSpotkaniaVisibility(true);
+
+      /* Jeśli kiedyś będziesz chciał rozbić „Boiska” na 2 przełączniki:
+         const pilkarskie = webmap.layers.find(l => (l.title||"").toLowerCase().includes("piłk"));
+         const koszykarskie = webmap.layers.find(l => (l.title||"").toLowerCase().includes("koszyk"));
+         i potem pilkarskie.visible = ..., koszykarskie.visible = ...
+      */
     });
   </script>
 </body>
