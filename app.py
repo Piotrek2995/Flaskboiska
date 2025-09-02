@@ -189,8 +189,11 @@ def logout():
 @app.route('/add_match', methods=['POST'])
 @login_required
 def add_match():
-    x = float(request.form['x']) if 'x' in request.form and request.form['x'] else None
-    y = float(request.form['y']) if 'y' in request.form and request.form['y'] else None
+    # bezpieczne rzutowanie x/y (mogą nie przyjść)
+    x = float(request.form['x']) if request.form.get('x') else None
+    y = float(request.form['y']) if request.form.get('y') else None
+
+    # 1) utwórz spotkanie
     m = Match(
         name=current_user.username,
         date=request.form['date'],
@@ -202,9 +205,19 @@ def add_match():
         user_id=current_user.id
     )
     db.session.add(m)
+    db.session.flush()  # żeby mieć m.id przed commitem
+
+    # 2) auto-zapis organizatora jako uczestnika (bez duplikatów)
+    exists = MatchSignup.query.filter_by(user_id=current_user.id, match_id=m.id).first()
+    if not exists:
+        db.session.add(MatchSignup(user_id=current_user.id, match_id=m.id))
+
+    # 3) zapisz zmiany
     db.session.commit()
-    flash('Dodano spotkanie.')
-    return redirect(url_for('index'))
+
+    flash('Dodano spotkanie i zapisano Cię jako uczestnika.')
+    return redirect(url_for('meetings'))  # lub 'index', jeśli wolisz wracać na start
+
 
 @app.route('/report_issue', methods=['POST'])
 @login_required
