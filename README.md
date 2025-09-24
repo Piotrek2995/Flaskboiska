@@ -7,4 +7,4 @@ Aplikacja służąca do:
 -zgłaszania awarii na danym boisku 
 
 
-Link: https://flaskboiska.onrender.com/
+Link: https://sportmapper.pl/
