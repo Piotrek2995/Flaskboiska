@@ -1,10 +1,10 @@
-Aplikacja służąca do:
+Aplikacja webowa służąca do:
 
--znajdywania boisk do piłki nożnej oraz koszykowki
+-znajdywania boisk do piłki nożnej oraz koszykowki ( zawiera bazę wszystkich boisk w warszawie)
 
 -umawiania spotkań na danym boisku o danym czasie
 
 -zgłaszania awarii na danym boisku 
 
 
-Link: https://sportmapper.pl/
+Link: https://sportmapper.pl/          ( już nieaktywny 😞)
