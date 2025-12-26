@@ -7,4 +7,4 @@ Aplikacja webowa służąca do:
 -zgłaszania awarii na danym boisku 
 
 
-Link: https://sportmapper.pl/          ( już nieaktywny 😞)
+Link: https://sportmapper.pl/          
