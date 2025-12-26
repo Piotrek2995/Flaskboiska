@@ -78,7 +78,7 @@
 <body>
   <div class="topbar">
     <div class="logo">
-      <img class="icon-header" src="{{ url_for('static', filename='court-sport.png') }}" alt="icon">
+      <img class="icon-header" src="../static/court-sport.png" alt="icon">
       <span class="brand">SportMapper</span>
     </div>
     <div class="user-bar">
@@ -97,13 +97,13 @@
 
       <!-- 1. Mapa boisk -->
       <a class="card" href="https://experience.arcgis.com/experience/d400320f027e43b5b2d699e0facc50a9?draft=true">
-        <img class="icon" src="{{ url_for('static', filename='court-sport.png') }}" alt="">
+        <img class="icon" src="../static/court-sport.png" alt="">
         Mapa boisk
       </a>
 
       <!-- 2. Mapa spotkań -->
-      <a class="card" href="/mapa">
-        <img class="icon" src="{{ url_for('static', filename='court-sport.png') }}" alt="">
+      <a class="card" href="mapa.html">
+        <img class="icon" src="../static/court-sport.png" alt="">
         Mapa spotkań
       </a>
 
@@ -127,7 +127,7 @@
             href="#" class="card disabled"
           {% endif %}
         >
-          <img class="icon" src="{{ url_for('static', filename='awaria.png') }}" alt="">
+          <img class="icon" src="../static/awaria.png" alt="">
           Zgłoś awarię na boisku
         </a>
 
