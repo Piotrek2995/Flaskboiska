@@ -7,4 +7,5 @@ Aplikacja webowa służąca do:
 -zgłaszania awarii na danym boisku 
 
 
-Link: https://sportmapper.pl/          
+Link: https://sportmapper.pl/  JUZ NIEAKTYWNY 
+Nowy: https://piotrek2995.github.io/Flaskboiska/
